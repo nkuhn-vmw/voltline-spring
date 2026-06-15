@@ -5,26 +5,45 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ProductService {
-    private final List<Product> products = new ArrayList<>(List.of(
-        new Product(1L, "Gaming Laptop", "High-performance laptop for gaming", new BigDecimal("1299.99")),
-        new Product(2L, "Mechanical Keyboard", "RGB backlit mechanical keyboard", new BigDecimal("89.50")),
-        new Product(3L, "Wireless Mouse", "Ergonomic wireless mouse", new BigDecimal("45.00")),
-        new Product(4L, "4K Monitor", "32-inch 4K UHD monitor", new BigDecimal("349.99")),
-        new Product(5L, "Noise Cancelling Headphones", "Active noise cancelling over-ear headphones", new BigDecimal("199.00")),
-        new Product(6L, "USB-C Hub", "Multi-port USB-C adapter", new BigDecimal("29.99"))
-    ));
+    private final Map<Long, Product> products = new ConcurrentHashMap<>();
+
+    public ProductService() {
+        seedProducts();
+    }
+
+    private void seedProducts() {
+        List<Product> initialProducts = Arrays.asList(
+            new Product(1L, "MacBook Pro 14\"", new BigDecimal("1999.99"), "Laptops"),
+            new Product(2L, "Dell XPS 13", new BigDecimal("1299.00"), "Laptops"),
+            new Product(3L, "Sony WH-1000XM5", new BigDecimal("398.00"), "Audio"),
+            new Product(4L, "Logitech MX Master 3S", new BigDecimal("99.00"), "Accessories"),
+            new Product(5L, "Samsung Odyssey G9", new BigDecimal("1499.99"), "Monitors"),
+            new Product(6L, "Keychron Q1", new BigDecimal("169.00"), "Accessories")
+        );
+        initialProducts.forEach(p -> products.put(p.getId(), p));
+    }
 
     public List<Product> findAll() {
-        return Collections.unmodifiableList(products);
+        return new ArrayList<>(products.values());
     }
 
     public Optional<Product> findById(Long id) {
-        return products.stream()
-                .filter(p -> p.id().equals(id))
-                .findFirst();
+        return Optional.ofNullable(products.get(id));
+    }
+
+    public Product save(Product product) {
+        if (product.getId() == null) {
+            product.setId(System.currentTimeMillis());
+        }
+        products.put(product.getId(), product);
+        return product;
+    }
+
+    public boolean deleteById(Long id) {
+        return products.remove(id) != null;
     }
 }
