@@ -17,14 +17,14 @@ public class ProductService {
 
     private void seedProducts() {
         List<Product> initialProducts = Arrays.asList(
-            new Product(1L, "MacBook Pro 14\"", new BigDecimal("1999.99"), "Laptops"),
-            new Product(2L, "Dell XPS 13", new BigDecimal("1299.00"), "Laptops"),
-            new Product(3L, "Sony WH-1000XM5", new BigDecimal("398.00"), "Audio"),
-            new Product(4L, "Logitech MX Master 3S", new BigDecimal("99.00"), "Accessories"),
-            new Product(5L, "Samsung Odyssey G9", new BigDecimal("1499.99"), "Monitors"),
-            new Product(6L, "Keychron Q1", new BigDecimal("169.00"), "Accessories")
+            new Product(1L, "Gaming Laptop", "High performance gaming laptop", new BigDecimal("1999.99")),
+            new Product(2L, "Dell XPS 13", "Compact and powerful laptop", new BigDecimal("1299.00")),
+            new Product(3L, "Sony WH-1000XM5", "Industry leading noise canceling headphones", new BigDecimal("398.00")),
+            new Product(4L, "Logitech MX Master 3S", "Ergonomic wireless mouse", new BigDecimal("99.00")),
+            new Product(5L, "Samsung Odyssey G9", "Ultra-wide curved gaming monitor", new BigDecimal("1499.99")),
+            new Product(6L, "Keychron Q1", "Mechanical keyboard", new BigDecimal("169.00"))
         );
-        initialProducts.forEach(p -> products.put(p.getId(), p));
+        initialProducts.forEach(p -> products.put(p.id(), p));
     }
 
     public List<Product> findAll() {
@@ -36,10 +36,12 @@ public class ProductService {
     }
 
     public Product save(Product product) {
-        if (product.getId() == null) {
-            product.setId(System.currentTimeMillis());
+        Long id = product.id();
+        if (id == null) {
+            id = System.currentTimeMillis();
+            product = new Product(id, product.name(), product.description(), product.price());
         }
-        products.put(product.getId(), product);
+        products.put(id, product);
         return product;
     }
 
