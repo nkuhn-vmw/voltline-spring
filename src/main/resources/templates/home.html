@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Voltline Store</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .product-card { border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Voltline</h1>
+    <div class="product-grid">
+        <div class="product-card" th:each="product : ${products}">
+            <h3 th:text="${product.name}">Product Name</h3>
+            <p th:text="${'$' + product.priceUsd}">$0.00</p>
+            <small th:text="${product.category}">Category</small>
+        </div>
+    </div>
+</body>
+</html>
